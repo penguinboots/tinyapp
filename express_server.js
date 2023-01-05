@@ -7,6 +7,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
+// generate 6-digit string of random lower case letters and numbers
 const generateRandomString = () => {
   let result = '';
   for (let i = 0; i < 6; i++) {
