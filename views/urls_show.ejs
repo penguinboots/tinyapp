@@ -20,6 +20,11 @@
         <p class="card-text">
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
+        <p><form method="POST" action="/urls/<%= id %>/#">
+          <label for="newURL">New URL:</label> 
+          <input type="text" id="newURL">
+          <button type="submit" class="btn btn-outline-primary">Update URL</button>
+        </form></p>
         <p class="card-text">
           <a href="#">Shorten New URL!</a>
         </p>
