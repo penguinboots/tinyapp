@@ -75,8 +75,8 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie('user', username);
+  const user = req.body.username;
+  res.cookie('username', user);
   res.redirect("/urls");
 });
 
