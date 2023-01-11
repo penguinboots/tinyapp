@@ -17,13 +17,13 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = {
-  userRandomID: {
-    id: "userRandomID",
+const userDatabase = {
+  d5dd49: {
+    id: "d5dd49",
     email: "user@example.com",
     password: "purple-monkey-dinosaur",
   },
-  user2RandomID: {
+  dsjfe3: {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk",
@@ -35,7 +35,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  // res.json(urlDatabase);
+  res.json(userDatabase);
 });
 
 app.get("/hello", (req, res) => {
@@ -111,8 +112,9 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
-  const id = generateRandomString;
-  users[id] = { email, password };
+  const id = generateRandomString();
+  userDatabase[id] = { id, email, password };
+  console.log(userDatabase[id]);
   res.cookie("user_id", id);
   res.redirect("/urls");
 });
