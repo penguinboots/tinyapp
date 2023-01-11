@@ -140,7 +140,7 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   const user = req.body.username;
   res.clearCookie('user_id', user);
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 app.post("/register", (req, res) => {
