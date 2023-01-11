@@ -12,6 +12,16 @@ const generateRandomString = () => {
   return Math.random().toString(16).slice(2, 8);
 };
 
+// return user_id given email
+const getUserByEmail = (email) => {
+  for (const userID in userDatabase) {
+    if (userDatabase[userID].email === email) {
+      return userDatabase[userID].id;
+    }
+  }
+  return false;
+};
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -116,11 +126,8 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).send("Please fill in all fields!");
   }
-
-  for (const userID in userDatabase) {
-    if (userDatabase[userID]["email"] === email) {
-      return res.status(400).send("Email already in use!");
-    }
+  if (getUserByEmail(email)) {
+    return res.status(400).send("Email already in use!");
   }
 
   const id = generateRandomString();
@@ -129,6 +136,7 @@ app.post("/register", (req, res) => {
   res.cookie("user_id", id);
   res.redirect("/urls");
 });
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
