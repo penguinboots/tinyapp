@@ -34,10 +34,15 @@ const userDatabase = {
     password: "purple-monkey-dinosaur",
   },
   dsjfe3: {
-    id: "user2RandomID",
+    id: "dsjfe3",
     email: "user2@example.com",
     password: "dishwasher-funk",
   },
+  sd3dss: {
+    id: "sd3dss",
+    email: "test@test.com",
+    password: "test"
+  }
 };
 
 app.get("/", (req, res) => {
