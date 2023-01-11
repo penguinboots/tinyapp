@@ -120,10 +120,8 @@ app.post("/login", (req, res) => {
 
   let user;
 
-  for (const userID in userDatabase) {
-    if (userDatabase[userID].email === email) {
-      user = userDatabase[userID];
-    }
+  if (getUserByEmail(email)) {
+    user = userDatabase[getUserByEmail(email)];
   }
 
   if (!user || user.password !== password) {
@@ -131,7 +129,6 @@ app.post("/login", (req, res) => {
   }
 
   res.cookie("userId", user.id);
-
   res.redirect("/urls");
 });
 
