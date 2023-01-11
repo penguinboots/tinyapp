@@ -109,6 +109,14 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 });
 
+app.post("/register", (req, res) => {
+  const { email, password } = req.body;
+  const id = generateRandomString;
+  users[id] = { email, password };
+  res.cookie("user_id", id);
+  res.redirect("/urls");
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
