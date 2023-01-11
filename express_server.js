@@ -7,15 +7,9 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-
 // generate 6-digit string of random lower case letters and numbers
 const generateRandomString = () => {
-  let result = '';
-  for (let i = 0; i < 6; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+  return Math.random().toString(16).slice(2, 8);
 };
 
 const urlDatabase = {
