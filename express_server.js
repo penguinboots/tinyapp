@@ -116,8 +116,22 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const user = req.body.username;
-  res.cookie('username', user);
+  const { email, password } = req.body;
+
+  let user;
+
+  for (const userID in userDatabase) {
+    if (userDatabase[userID].email === email) {
+      user = userDatabase[userID];
+    }
+  }
+
+  if (!user || user.password !== password) {
+    return res.status(400).send("You have entered an invalid username or password.");
+  }
+
+  res.cookie("userId", user.id);
+
   res.redirect("/urls");
 });
 
