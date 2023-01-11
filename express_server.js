@@ -138,8 +138,7 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  const user = req.body.username;
-  res.clearCookie('user_id', user);
+  res.clearCookie('user_id');
   res.redirect("/login");
 });
 
