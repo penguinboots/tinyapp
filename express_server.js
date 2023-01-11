@@ -112,6 +112,17 @@ app.post("/logout", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).send("Please fill in all fields!");
+  }
+
+  for (const userID in userDatabase) {
+    if (userDatabase[userID]["email"] === email) {
+      return res.status(400).send("Email already in use!");
+    }
+  }
+
   const id = generateRandomString();
   userDatabase[id] = { id, email, password };
   console.log(userDatabase[id]);
