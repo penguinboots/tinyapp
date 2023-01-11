@@ -130,10 +130,10 @@ app.post("/login", (req, res) => {
   }
 
   if (!user || user.password !== password) {
-    return res.status(400).send("You have entered an invalid username or password.");
+    return res.status(403).send("You have entered an invalid username or password.");
   }
 
-  res.cookie("userId", user.id);
+  res.cookie("user_id", user.id);
   res.redirect("/urls");
 });
 
