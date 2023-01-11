@@ -139,7 +139,7 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req, res) => {
   const user = req.body.username;
-  res.clearCookie('username', user);
+  res.clearCookie('user_id', user);
   res.redirect("/urls");
 });
 
