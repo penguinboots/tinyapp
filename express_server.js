@@ -1,10 +1,15 @@
 const express = require('express');
+const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers');
+
 const app = express();
 const PORT = 8080; // default port 8080
+
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
+const methodOverride = require('method-override');
+
+
 const salt = bcrypt.genSaltSync(10);
-const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers');
 
 app.set('view engine', 'ejs');
 
@@ -17,6 +22,7 @@ app.use(cookieSession({
   name: 'session',
   keys: ['keykeykey']
 }));
+app.use(methodOverride('X-HTTP-Method-Override'));
 
 ///////////////
 /* DATABASES */
