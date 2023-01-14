@@ -98,16 +98,16 @@ app.get("/urls.json", (req, res) => {
 });
 
 // GET /urls
-// only visible if logged in, shows URLs associated with logged in user
+// shows URLs associated with logged in user
 app.get("/urls", (req, res) => {
   const userID = req.cookies["user_id"];
   const userURLs = urlsForUser(userID, urlDatabase);
-
   const templateVars = {
     urls: userURLs,
     user: userDatabase[req.cookies["user_id"]]
   };
   
+  // error if not logged in
   if (!templateVars.user) {
     return res.status(401).send("Please log in or register to view this page.");
   }
@@ -116,12 +116,12 @@ app.get("/urls", (req, res) => {
 });
 
 // GET /urls/new
-// redirect to /login if not logged in
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: userDatabase[req.cookies["user_id"]]
   };
 
+  // redirect to /login if not logged in
   if (!templateVars.user) {
     res.redirect("/login");
   }
@@ -136,8 +136,15 @@ app.get("/urls/:id", (req, res) => {
     longURL: urlDatabase[req.params.id].longURL,
     user: userDatabase[req.cookies["user_id"]]
   };
+
+  // error if shortURL does not exist
   if (!urlDatabase[templateVars.id]) {
     return res.status(404).send("This URL doesn't exist!");
+  }
+
+  // can only view shortURL pages that belong to user
+  if (urlDatabase[templateVars.id].userID !== templateVars.user) {
+    return res.status(401).send("This URL belongs to another account.");
   }
   res.render("urls_show", templateVars);
 });
@@ -150,11 +157,12 @@ app.get("/u/:id", (req, res) => {
 });
 
 // GET /register
-// if user is logged in, redirect to /urls
 app.get("/register", (req, res) => {
   const templateVars = {
     user: userDatabase[req.cookies["user_id"]]
   };
+  
+  // if user logged in, redirect to /urls
   if (templateVars.user) {
     res.redirect("/urls");
   }
@@ -174,22 +182,22 @@ app.get("/login", (req, res) => {
 ////////////////
 
 // POST /urls
-// creates new short URL with new generated id
-// redirects to urls page for new URL
 app.post("/urls", (req, res) => {
   let user = userDatabase[req.cookies["user_id"]];
+  
+  // error if not logged in
   if (!user) {
     return res.status(401).send("Please log in to shorten new URLS!");
   }
   
+  // create new shortURL with generated id, redirect to new shortURL page
   const newID = generateRandomString();
   urlDatabase[newID] = req.body.longURL;
   res.redirect(`/urls/${newID}`);
 });
 
 // POST /urls/:id/delete
-// removes url from database given id
-// redirects to /urls
+// removes url from database given id, redirects to /urls
 app.post("/urls/:id/delete", (req, res) => {
   const del = req.params.id;
   delete urlDatabase[del];
@@ -197,8 +205,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 // POST /urls/:id
-// updates longURL of given id
-// redirects to /urls
+// updates longURL of given id, redirects to /urls
 app.post("/urls/:id", (req, res) => {
   const newURL = req.body.longURL;
   const id = req.params.id;
@@ -207,46 +214,46 @@ app.post("/urls/:id", (req, res) => {
 });
 
 // POST /login
-// if username and password match database, give user_id cookie
 // redirect to /urls
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
   let user;
-
   if (getUserByEmail(email)) {
     user = userDatabase[getUserByEmail(email)];
   }
 
+  // error if incorrect credentials
   if (!user || user.password !== password) {
     return res.status(403).send("You have entered an invalid username or password.");
   }
 
+  // give cookie on sucessful authentication
   res.cookie("user_id", user.id);
   res.redirect("/urls");
 });
 
 // POST /logout
-// clears used_id cookie
-// redirect to /login
+// clears user_id cookie, redirect to /login
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
   res.redirect("/login");
 });
 
 // POST /register
-// add new user (id, email, password) to database
-// redirect to /urls
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
 
+  // error if fields not filled
   if (!email || !password) {
     return res.status(400).send("Please fill in all fields!");
   }
+  // error if email in use
   if (getUserByEmail(email)) {
     return res.status(400).send("Email already in use!");
   }
 
+  // add new user with generated id to database, redirect to /urls
   const id = generateRandomString();
   userDatabase[id] = { id, email, password };
   console.log(userDatabase[id]);
