@@ -22,7 +22,7 @@ app.use(cookieSession({
   name: 'session',
   keys: ['keykeykey']
 }));
-app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(methodOverride('_method'));
 
 ///////////////
 /* DATABASES */
@@ -173,7 +173,7 @@ app.post('/urls', (req, res) => {
 });
 
 // POST /urls/:id/delete - deletes selected shortURL
-app.post('/urls/:id/delete', (req, res) => {
+app.delete('/urls/:id', (req, res) => {
   const del = req.params.id;
   let user = userDatabase[req.session.user_id];
 
@@ -196,7 +196,7 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 // POST /urls/:id
-app.post('/urls/:id', (req, res) => {
+app.put('/urls/:id', (req, res) => {
   const newURL = req.body.longURL;
   const urlID = req.params.id;
   let userID = userDatabase[req.session.user_id].id;
