@@ -23,7 +23,7 @@
     <a href="/login"><button type="submit" class="btn btn-light">Login</button></a>
     <a href="/register"><button type="submit" class="btn btn-secondary">Register</button></a>
     <% } else { %>
-    <form method="POST" action="logout" class="form-inline">
+    <form method="POST" action="/logout" class="form-inline">
       <div>
         Logged in as: <%= user.email %>
         <button type="submit" class="btn btn-danger">Logout</button>
