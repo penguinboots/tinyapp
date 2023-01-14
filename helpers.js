@@ -3,8 +3,13 @@
 /////////////
 
 // generate 6-digit string of random lower case letters and numbers
+// ensures first character is a letter (avoid syntax issues in Object database)
 const generateRandomString = () => {
-  return Math.random().toString(16).slice(2, 8);
+  let newString = '';
+  const chars = 'abcdefghijklmnopqrstuvwxyz';
+  newString += chars[Math.floor(Math.random() * chars.length)];
+  newString += Math.random().toString(16).slice(2, 7);
+  return newString;
 };
 
 // return user_id given email
