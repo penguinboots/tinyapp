@@ -163,7 +163,6 @@ app.post('/urls', (req, res) => {
     longURL: req.body.longURL,
     userID: user.id
   };
-  console.log(urlDatabase[newID]);
   res.redirect(`/urls/${newID}`);
 });
 
@@ -210,7 +209,7 @@ app.post('/urls/:id', (req, res) => {
   }
 
   // updates longURL of given id, redirects to /urls
-  urlDatabase[urlID].longURL = req.body.longURL;
+  urlDatabase[urlID].longURL = newURL;
   res.redirect('/urls');
 });
 
@@ -258,7 +257,6 @@ app.post('/register', (req, res) => {
   // add new user with generated id to database, redirect to /urls
   const id = generateRandomString();
   userDatabase[id] = { id, email, hashedPass };
-  console.log(userDatabase[id]);
   req.session.user_id = id;
   res.redirect('/urls');
 });
