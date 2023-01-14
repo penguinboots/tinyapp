@@ -181,7 +181,7 @@ app.get("/login", (req, res) => {
 /* POST PATHS */
 ////////////////
 
-// POST /urls
+// POST /urls - creates new shortURLs
 app.post("/urls", (req, res) => {
   let user = userDatabase[req.cookies["user_id"]];
   
@@ -196,19 +196,49 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newID}`);
 });
 
-// POST /urls/:id/delete
-// removes url from database given id, redirects to /urls
+// POST /urls/:id/delete - deletes selected shortURL
 app.post("/urls/:id/delete", (req, res) => {
   const del = req.params.id;
+  let user = userDatabase[req.cookies["user_id"]];
+
+  // error if id does not exist
+  if (!urlDatabase[del]) {
+    return res.status(400).send("Delete failed - URL id does not exist.");
+  }
+  // error if not logged in
+  if (!user) {
+    return res.status(401).send("User is not logged in.");
+  }
+  // error if user does not own URL
+  if (urlDatabase[del].userID !== user) {
+    return res.status(401).send("URL does not belong to current user.");
+  }
+
+  // removes url from database given id, redirects to /urls
   delete urlDatabase[del];
   res.redirect("/urls");
 });
 
 // POST /urls/:id
-// updates longURL of given id, redirects to /urls
 app.post("/urls/:id", (req, res) => {
   const newURL = req.body.longURL;
   const id = req.params.id;
+  let user = userDatabase[req.cookies["user_id"]];
+
+  // error if id does not exist
+  if (!urlDatabase[id]) {
+    return res.status(400).send("Delete failed - URL id does not exist.");
+  }
+  // error if not logged in
+  if (!user) {
+    return res.status(401).send("User is not logged in.");
+  }
+  // error if user does not own URL
+  if (urlDatabase[id].userID !== user) {
+    return res.status(401).send("URL does not belong to current user.");
+  }
+
+  // updates longURL of given id, redirects to /urls
   urlDatabase[id] = { longURL: newURL, userID: userDatabase[req.cookies["user_id"]] };
   res.redirect("/urls");
 });
