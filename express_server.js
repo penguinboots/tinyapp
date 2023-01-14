@@ -116,8 +116,11 @@ app.get('/urls/:id', (req, res) => {
 // GET /u/:id
 // redirects short URL (id) to long URL
 app.get('/u/:id', (req, res) => {
-  const longURL = urlDatabase[req.params.id].longURL;
-  res.redirect(longURL);
+  if (!urlDatabase[req.params.id]) {
+    res.status(404).send("This URL does not exist.");
+  } else {
+    res.redirect(urlDatabase[req.params.id].longURL);
+  }
 });
 
 // GET /register
