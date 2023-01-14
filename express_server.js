@@ -111,7 +111,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id].longURL,
     user: userDatabase[req.cookies["user_id"]]
   };
   if (!urlDatabase[templateVars.id]) {
@@ -123,7 +123,7 @@ app.get("/urls/:id", (req, res) => {
 // GET /u/:id
 // redirects short URL (id) to long URL
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });
 
@@ -180,7 +180,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const newURL = req.body.longURL;
   const id = req.params.id;
-  urlDatabase[id] = newURL;
+  urlDatabase[id] = { longURL: newURL, userID: userDatabase[req.cookies["user_id"]] };
   res.redirect("/urls");
 });
 
