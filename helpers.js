@@ -14,7 +14,7 @@ const getUserByEmail = (email, database) => {
       return database[userID].id;
     }
   }
-  return false;
+  return undefined;
 };
 
 // returns database of url objects that match given user id
