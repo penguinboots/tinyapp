@@ -193,24 +193,24 @@ app.post('/urls/:id/delete', (req, res) => {
 // POST /urls/:id
 app.post('/urls/:id', (req, res) => {
   const newURL = req.body.longURL;
-  const id = req.params.id;
-  let user = userDatabase[req.session.user_id];
+  const urlID = req.params.id;
+  let userID = userDatabase[req.session.user_id].id;
 
   // error if id does not exist
-  if (!urlDatabase[id]) {
+  if (!urlDatabase[urlID]) {
     return res.status(400).send('Delete failed - URL id does not exist.');
   }
   // error if not logged in
-  if (!user) {
+  if (!userID) {
     return res.status(401).send('User is not logged in.');
   }
   // error if user does not own URL
-  if (urlDatabase[id].userID !== user.id) {
+  if (urlDatabase[urlID].userID !== userID) {
     return res.status(401).send('URL does not belong to current user.');
   }
 
   // updates longURL of given id, redirects to /urls
-  urlDatabase[id] = { longURL: newURL, userID: userDatabase[req.session.user_id] };
+  urlDatabase[urlID].longURL = req.body.longURL;
   res.redirect('/urls');
 });
 
