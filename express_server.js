@@ -88,11 +88,16 @@ app.get("/urls", (req, res) => {
 });
 
 // GET /urls/new
-//
+// redirect to /login if not logged in
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: userDatabase[req.cookies["user_id"]]
   };
+
+  if (!templateVars.user) {
+    res.redirect("/login");
+  }
+
   res.render("urls_new", templateVars);
 });
 
@@ -141,6 +146,11 @@ app.get("/login", (req, res) => {
 // creates new short URL with new generated id
 // redirects to urls page for new URL
 app.post("/urls", (req, res) => {
+  let user = userDatabase[req.cookies["user_id"]];
+  if (!user) {
+    return res.send("Please log in to shorten new URLS!");
+  }
+  
   const newID = generateRandomString();
   urlDatabase[newID] = req.body.longURL;
   res.redirect(`/urls/${newID}`);
