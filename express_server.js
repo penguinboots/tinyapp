@@ -53,18 +53,11 @@ const userDatabase = {
 
 // GET /
 app.get('/', (req, res) => {
-  if (req.session.user_id) {
-    res.redirect('/urls');
-  } else {
+  if (!req.session.user_id) {
     res.redirect('/login');
+  } else {
+    res.redirect('/urls');
   }
-});
-
-// GET /urls.json
-// display database in plaintext (for testing)
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-  // res.json(userDatabase);
 });
 
 // GET /urls
@@ -101,16 +94,16 @@ app.get('/urls/new', (req, res) => {
 
 // GET /urls/:id
 app.get('/urls/:id', (req, res) => {
+  // error if shortURL does not exist
+  if (!urlDatabase[req.params.id]) {
+    return res.status(404).send('This URL doesn\'t exist!');
+  }
+
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
     user: userDatabase[req.session.user_id]
   };
-
-  // error if shortURL does not exist
-  if (!urlDatabase[templateVars.id]) {
-    return res.status(404).send('This URL doesn\'t exist!');
-  }
 
   // can only view shortURL pages that belong to user
   if (urlDatabase[templateVars.id].userID !== templateVars.user.id) {
