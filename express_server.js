@@ -111,7 +111,7 @@ app.get("/urls", (req, res) => {
     urls: userURLs,
     user: userDatabase[req.session.user_id]
   };
-  
+
   // error if not logged in
   if (!templateVars.user) {
     return res.status(401).send("Please log in or register to view this page.");
@@ -166,7 +166,7 @@ app.get("/register", (req, res) => {
   const templateVars = {
     user: userDatabase[req.session.user_id]
   };
-  
+
   // if user logged in, redirect to /urls
   if (templateVars.user) {
     res.redirect("/urls");
@@ -189,15 +189,18 @@ app.get("/login", (req, res) => {
 // POST /urls - creates new shortURLs
 app.post("/urls", (req, res) => {
   let user = userDatabase[req.session.user_id];
-  
+
   // error if not logged in
   if (!user) {
     return res.status(401).send("Please log in to shorten new URLS!");
   }
-  
+
   // create new shortURL with generated id, redirect to new shortURL page
   const newID = generateRandomString();
-  urlDatabase[newID] = req.body.longURL;
+  urlDatabase[newID] = {
+    longURL: req.body.longUR,
+    userID: user
+  };
   res.redirect(`/urls/${newID}`);
 });
 
@@ -270,7 +273,7 @@ app.post("/login", (req, res) => {
 // POST /logout
 // clears user_id cookie, redirect to /login
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  req.session.user_id = null;
   res.redirect("/login");
 });
 
