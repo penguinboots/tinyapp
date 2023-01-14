@@ -165,7 +165,7 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${newID}`);
 });
 
-// POST /urls/:id/delete - deletes selected shortURL
+// DELETE /urls/:id - deletes selected shortURL
 app.delete('/urls/:id', (req, res) => {
   const del = req.params.id;
   let user = userDatabase[req.session.user_id];
@@ -188,7 +188,7 @@ app.delete('/urls/:id', (req, res) => {
   res.redirect('/urls');
 });
 
-// POST /urls/:id
+// PUT /urls/:id
 app.put('/urls/:id', (req, res) => {
   const newURL = req.body.longURL;
   const urlID = req.params.id;
