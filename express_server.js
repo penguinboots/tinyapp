@@ -31,6 +31,19 @@ const getUserByEmail = (email) => {
   return false;
 };
 
+// returns database of url objects that match given user id
+const getUserURLs = (id, database) => {
+  let userURLs = {};
+
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userURLs[shortURL] = database[shortURL];
+    }
+  }
+
+  return userURLs;
+};
+
 ///////////////
 /* DATABASES */
 ///////////////
@@ -78,18 +91,27 @@ app.get("/", (req, res) => {
 });
 
 // GET /urls.json
-// Display database in plaintext (for testing)
+// display database in plaintext (for testing)
 app.get("/urls.json", (req, res) => {
-  // res.json(urlDatabase);
-  res.json(userDatabase);
+  res.json(urlDatabase);
+  // res.json(userDatabase);
 });
 
 // GET /urls
+// only visible if logged in, shows URLs associated with logged in user
 app.get("/urls", (req, res) => {
+  const userID = req.cookies["user_id"];
+  const userURLs = getUserURLs(userID, urlDatabase);
+
   const templateVars = {
-    urls: urlDatabase,
+    urls: userURLs,
     user: userDatabase[req.cookies["user_id"]]
   };
+  
+  if (!templateVars.user) {
+    return res.status(401).send("Please log in or register to view this page.");
+  }
+
   res.render("urls_index", templateVars);
 });
 
