@@ -107,7 +107,7 @@ app.get('/urls/:id', (req, res) => {
   }
 
   // can only view shortURL pages that belong to user
-  if (urlDatabase[templateVars.id].userID !== templateVars.user) {
+  if (urlDatabase[templateVars.id].userID !== templateVars.user.id) {
     return res.status(401).send('This URL belongs to another account.');
   }
   res.render('urls_show', templateVars);
@@ -161,8 +161,9 @@ app.post('/urls', (req, res) => {
   const newID = generateRandomString();
   urlDatabase[newID] = {
     longURL: req.body.longURL,
-    userID: user
+    userID: user.id
   };
+  console.log(urlDatabase[newID]);
   res.redirect(`/urls/${newID}`);
 });
 
@@ -180,7 +181,7 @@ app.post('/urls/:id/delete', (req, res) => {
     return res.status(401).send('User is not logged in.');
   }
   // error if user does not own URL
-  if (urlDatabase[del].userID !== user) {
+  if (urlDatabase[del].userID !== user.id) {
     return res.status(401).send('URL does not belong to current user.');
   }
 
@@ -204,7 +205,7 @@ app.post('/urls/:id', (req, res) => {
     return res.status(401).send('User is not logged in.');
   }
   // error if user does not own URL
-  if (urlDatabase[id].userID !== user) {
+  if (urlDatabase[id].userID !== user.id) {
     return res.status(401).send('URL does not belong to current user.');
   }
 
