@@ -88,11 +88,11 @@ const userDatabase = {
 
 // GET /
 app.get("/", (req, res) => {
-  let user = userDatabase[req.session.user_id];
-  if (user) {
+  if (req.session.user_id) {
     res.redirect("/urls");
+  } else {
+    res.redirect('/login');
   }
-  res.send("Home page placeholder");
 });
 
 // GET /urls.json
