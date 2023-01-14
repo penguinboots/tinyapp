@@ -5,25 +5,26 @@ TinyApp is a full stack web application built with Node and Express that allows 
 ## Final Product
 
 URLs page of logged in user
-!['Screenshot of URLs page'](/images/URLS.png)
+!['Screenshot of URLs page'](docs/urls-directory.png)
 
 Registration page
-!['Screenshot of registration page'](/images/REGISTER.png)
+!['Screenshot of registration page'](docs/registration-page.png)
 
 Shorten new URL
-!['Screenshot of create URL page'](/images/NEW.png)
+!['Screenshot of create URL page'](docs/new-url-page.png)
 
 Managing shortened URL
-!['Screenshot of individual URL page'](/images/SHOW.png)
+!['Screenshot of individual URL page'](docs/shortened-url-page.png)
 
 ## Dependencies
 
 - Node.js
 - Express
 - EJS
-- bcrypt
+- bcryptjs
 - body-parser
 - cookie-session
+- method-override
 
 ## Getting Started
 
