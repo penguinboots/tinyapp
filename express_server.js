@@ -27,8 +27,8 @@ const generateRandomString = () => {
 };
 
 // return user_id given email
-const getUserByEmail = (email) => {
-  for (const userID in userDatabase) {
+const getUserByEmail = (email, database) => {
+  for (const userID in database) {
     if (userDatabase[userID].email === email) {
       return userDatabase[userID].id;
     }
@@ -256,8 +256,8 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
   let user;
-  if (getUserByEmail(email)) {
-    user = userDatabase[getUserByEmail(email)];
+  if (getUserByEmail(email, userDatabase)) {
+    user = userDatabase[getUserByEmail(email, userDatabase)];
   }
 
   // error if incorrect credentials
@@ -288,7 +288,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Please fill in all fields!");
   }
   // error if email in use
-  if (getUserByEmail(email)) {
+  if (getUserByEmail(email, userDatabase)) {
     return res.status(400).send("Email already in use!");
   }
 
