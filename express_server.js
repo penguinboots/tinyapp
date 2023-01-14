@@ -4,8 +4,17 @@ const PORT = 8080; // default port 8080
 const cookieParser = require("cookie-parser");
 
 app.set("view engine", "ejs");
+
+////////////////
+/* MIDDLEWARE */
+////////////////
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+/////////////
+/* HELPERS */
+/////////////
 
 // generate 6-digit string of random lower case letters and numbers
 const generateRandomString = () => {
@@ -21,6 +30,10 @@ const getUserByEmail = (email) => {
   }
   return false;
 };
+
+///////////////
+/* DATABASES */
+///////////////
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -45,6 +58,11 @@ const userDatabase = {
   }
 };
 
+///////////////
+/* GET PATHS */
+///////////////
+
+// GET /
 app.get("/", (req, res) => {
   let user = userDatabase[req.cookies["user_id"]];
   if (user) {
@@ -53,15 +71,14 @@ app.get("/", (req, res) => {
   res.send("Home page placeholder");
 });
 
+// GET /urls.json
+// Display database in plaintext (for testing)
 app.get("/urls.json", (req, res) => {
   // res.json(urlDatabase);
   res.json(userDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
+// GET /urls
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
@@ -70,6 +87,8 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// GET /urls/new
+//
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: userDatabase[req.cookies["user_id"]]
@@ -77,6 +96,7 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+// GET /urls/:id
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
@@ -86,11 +106,15 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// GET /u/:id
+// redirects short URL (id) to long URL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
 
+// GET /register
+// if user is logged in, redirect to /urls
 app.get("/register", (req, res) => {
   const templateVars = {
     user: userDatabase[req.cookies["user_id"]]
@@ -101,6 +125,7 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
+// GET /login
 app.get("/login", (req, res) => {
   const templateVars = {
     user: userDatabase[req.cookies["user_id"]]
@@ -108,18 +133,31 @@ app.get("/login", (req, res) => {
   res.render("urls_login", templateVars);
 });
 
+////////////////
+/* POST PATHS */
+////////////////
+
+// POST /urls
+// creates new short URL with new generated id
+// redirects to urls page for new URL
 app.post("/urls", (req, res) => {
   const newID = generateRandomString();
   urlDatabase[newID] = req.body.longURL;
   res.redirect(`/urls/${newID}`);
 });
 
+// POST /urls/:id/delete
+// removes url from database given id
+// redirects to /urls
 app.post("/urls/:id/delete", (req, res) => {
   const del = req.params.id;
   delete urlDatabase[del];
   res.redirect("/urls");
 });
 
+// POST /urls/:id
+// updates longURL of given id
+// redirects to /urls
 app.post("/urls/:id", (req, res) => {
   const newURL = req.body.longURL;
   const id = req.params.id;
@@ -127,6 +165,9 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
+// POST /login
+// if username and password match database, give user_id cookie
+// redirect to /urls
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -144,11 +185,17 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
+// POST /logout
+// clears used_id cookie
+// redirect to /login
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
   res.redirect("/login");
 });
 
+// POST /register
+// add new user (id, email, password) to database
+// redirect to /urls
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
 
@@ -166,6 +213,9 @@ app.post("/register", (req, res) => {
   res.redirect("/urls");
 });
 
+//////////////////////
+/* SERVER LISTENING */
+//////////////////////
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
