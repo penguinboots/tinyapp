@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcryptjs");
+const salt = bcrypt.genSaltSync(10);
 
 app.set("view engine", "ejs");
 
@@ -254,7 +256,7 @@ app.post("/login", (req, res) => {
   }
 
   // error if incorrect credentials
-  if (!user || user.password !== password) {
+  if (!user || !bcrypt.compareSync(password, user.hashedPass)) {
     return res.status(403).send("You have entered an invalid username or password.");
   }
 
@@ -273,6 +275,7 @@ app.post("/logout", (req, res) => {
 // POST /register
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
+  const hashedPass = bcrypt.hashSync(password, salt);
 
   // error if fields not filled
   if (!email || !password) {
@@ -285,7 +288,7 @@ app.post("/register", (req, res) => {
 
   // add new user with generated id to database, redirect to /urls
   const id = generateRandomString();
-  userDatabase[id] = { id, email, password };
+  userDatabase[id] = { id, email, hashedPass };
   console.log(userDatabase[id]);
   res.cookie("user_id", id);
   res.redirect("/urls");
