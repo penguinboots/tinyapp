@@ -266,7 +266,7 @@ app.post("/login", (req, res) => {
   }
 
   // give cookie on sucessful authentication, redirect to /urls
-  req.session.user_id = user.userID;
+  req.session.user_id = user.id;
   res.redirect("/urls");
 });
 
