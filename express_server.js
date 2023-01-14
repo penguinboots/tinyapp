@@ -151,7 +151,7 @@ app.get("/login", (req, res) => {
 app.post("/urls", (req, res) => {
   let user = userDatabase[req.cookies["user_id"]];
   if (!user) {
-    return res.send("Please log in to shorten new URLS!");
+    return res.status(401).send("Please log in to shorten new URLS!");
   }
   
   const newID = generateRandomString();
