@@ -46,7 +46,11 @@ const userDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  let user = userDatabase[req.cookies["user_id"]];
+  if (user) {
+    res.redirect("/urls");
+  }
+  res.send("Home page placeholder");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -91,6 +95,9 @@ app.get("/register", (req, res) => {
   const templateVars = {
     user: userDatabase[req.cookies["user_id"]]
   };
+  if (templateVars.user) {
+    res.redirect("/urls");
+  }
   res.render("urls_register", templateVars);
 });
 
