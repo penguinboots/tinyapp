@@ -160,7 +160,7 @@ app.post('/urls', (req, res) => {
   // create new shortURL with generated id, redirect to new shortURL page
   const newID = generateRandomString();
   urlDatabase[newID] = {
-    longURL: req.body.longUR,
+    longURL: req.body.longURL,
     userID: user
   };
   res.redirect(`/urls/${newID}`);
