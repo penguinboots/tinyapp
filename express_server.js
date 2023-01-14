@@ -32,7 +32,7 @@ const getUserByEmail = (email) => {
 };
 
 // returns database of url objects that match given user id
-const getUserURLs = (id, database) => {
+const urlsForUser = (id, database) => {
   let userURLs = {};
 
   for (const shortURL in urlDatabase) {
@@ -101,7 +101,7 @@ app.get("/urls.json", (req, res) => {
 // only visible if logged in, shows URLs associated with logged in user
 app.get("/urls", (req, res) => {
   const userID = req.cookies["user_id"];
-  const userURLs = getUserURLs(userID, urlDatabase);
+  const userURLs = urlsForUser(userID, urlDatabase);
 
   const templateVars = {
     urls: userURLs,
