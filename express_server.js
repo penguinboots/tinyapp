@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const salt = bcrypt.genSaltSync(10);
 
@@ -12,7 +12,7 @@ app.set("view engine", "ejs");
 ////////////////
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieSession());
 
 /////////////
 /* HELPERS */
@@ -85,7 +85,7 @@ const userDatabase = {
 
 // GET /
 app.get("/", (req, res) => {
-  let user = userDatabase[req.cookies["user_id"]];
+  let user = userDatabase[req.session.user_id];
   if (user) {
     res.redirect("/urls");
   }
@@ -102,11 +102,11 @@ app.get("/urls.json", (req, res) => {
 // GET /urls
 // shows URLs associated with logged in user
 app.get("/urls", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   const userURLs = urlsForUser(userID, urlDatabase);
   const templateVars = {
     urls: userURLs,
-    user: userDatabase[req.cookies["user_id"]]
+    user: userDatabase[req.session.user_id]
   };
   
   // error if not logged in
@@ -120,7 +120,7 @@ app.get("/urls", (req, res) => {
 // GET /urls/new
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    user: userDatabase[req.cookies["user_id"]]
+    user: userDatabase[req.session.user_id]
   };
 
   // redirect to /login if not logged in
@@ -136,7 +136,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id].longURL,
-    user: userDatabase[req.cookies["user_id"]]
+    user: userDatabase[req.session.user_id]
   };
 
   // error if shortURL does not exist
@@ -161,7 +161,7 @@ app.get("/u/:id", (req, res) => {
 // GET /register
 app.get("/register", (req, res) => {
   const templateVars = {
-    user: userDatabase[req.cookies["user_id"]]
+    user: userDatabase[req.session.user_id]
   };
   
   // if user logged in, redirect to /urls
@@ -174,7 +174,7 @@ app.get("/register", (req, res) => {
 // GET /login
 app.get("/login", (req, res) => {
   const templateVars = {
-    user: userDatabase[req.cookies["user_id"]]
+    user: userDatabase[req.session.user_id]
   };
   res.render("urls_login", templateVars);
 });
@@ -185,7 +185,7 @@ app.get("/login", (req, res) => {
 
 // POST /urls - creates new shortURLs
 app.post("/urls", (req, res) => {
-  let user = userDatabase[req.cookies["user_id"]];
+  let user = userDatabase[req.session.user_id];
   
   // error if not logged in
   if (!user) {
@@ -201,7 +201,7 @@ app.post("/urls", (req, res) => {
 // POST /urls/:id/delete - deletes selected shortURL
 app.post("/urls/:id/delete", (req, res) => {
   const del = req.params.id;
-  let user = userDatabase[req.cookies["user_id"]];
+  let user = userDatabase[req.session.user_id];
 
   // error if id does not exist
   if (!urlDatabase[del]) {
@@ -225,7 +225,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const newURL = req.body.longURL;
   const id = req.params.id;
-  let user = userDatabase[req.cookies["user_id"]];
+  let user = userDatabase[req.session.user_id];
 
   // error if id does not exist
   if (!urlDatabase[id]) {
@@ -241,12 +241,11 @@ app.post("/urls/:id", (req, res) => {
   }
 
   // updates longURL of given id, redirects to /urls
-  urlDatabase[id] = { longURL: newURL, userID: userDatabase[req.cookies["user_id"]] };
+  urlDatabase[id] = { longURL: newURL, userID: userDatabase[req.session.user_id] };
   res.redirect("/urls");
 });
 
 // POST /login
-// redirect to /urls
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -260,7 +259,7 @@ app.post("/login", (req, res) => {
     return res.status(403).send("You have entered an invalid username or password.");
   }
 
-  // give cookie on sucessful authentication
+  // give cookie on sucessful authentication, redirect to /urls
   res.cookie("user_id", user.id);
   res.redirect("/urls");
 });
@@ -290,7 +289,7 @@ app.post("/register", (req, res) => {
   const id = generateRandomString();
   userDatabase[id] = { id, email, hashedPass };
   console.log(userDatabase[id]);
-  res.cookie("user_id", id);
+  req.session.user_id = id;
   res.redirect("/urls");
 });
 
