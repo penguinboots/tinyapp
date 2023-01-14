@@ -78,7 +78,7 @@ app.get('/urls', (req, res) => {
   const userURLs = urlsForUser(userID, urlDatabase);
   const templateVars = {
     urls: userURLs,
-    user: userID
+    user: userDatabase[userID]
   };
 
   // error if not logged in
