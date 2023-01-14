@@ -34,21 +34,11 @@ const urlDatabase = {
 };
 
 const userDatabase = {
-  d5dd49: {
-    id: 'd5dd49',
-    email: 'user@example.com',
-    password: 'purple-monkey-dinosaur',
+  cc2a31: {
+    id: 'cc2a31',
+    email: 'hi@hi.com',
+    hashedPass: '$2a$10$vFvjIS0aZi6oZyAi2ZFvgeXpSlrISP9B58NxoYWYaNihVUcTysTYy'
   },
-  dsjfe3: {
-    id: 'dsjfe3',
-    email: 'user2@example.com',
-    password: 'dishwasher-funk',
-  },
-  sd3dss: {
-    id: 'sd3dss',
-    email: 'test@test.com',
-    password: 'test'
-  }
 };
 
 ///////////////
