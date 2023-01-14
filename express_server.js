@@ -4,6 +4,7 @@ const PORT = 8080; // default port 8080
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const salt = bcrypt.genSaltSync(10);
+const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers');
 
 app.set("view engine", "ejs");
 
@@ -16,38 +17,6 @@ app.use(cookieSession({
   name: 'session',
   keys: ["keykeykey"]
 }));
-
-/////////////
-/* HELPERS */
-/////////////
-
-// generate 6-digit string of random lower case letters and numbers
-const generateRandomString = () => {
-  return Math.random().toString(16).slice(2, 8);
-};
-
-// return user_id given email
-const getUserByEmail = (email, database) => {
-  for (const userID in database) {
-    if (userDatabase[userID].email === email) {
-      return userDatabase[userID].id;
-    }
-  }
-  return false;
-};
-
-// returns database of url objects that match given user id
-const urlsForUser = (id, database) => {
-  let userURLs = {};
-
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userURLs[shortURL] = database[shortURL];
-    }
-  }
-
-  return userURLs;
-};
 
 ///////////////
 /* DATABASES */
