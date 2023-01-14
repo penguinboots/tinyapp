@@ -108,6 +108,9 @@ app.get("/urls/:id", (req, res) => {
     longURL: urlDatabase[req.params.id],
     user: userDatabase[req.cookies["user_id"]]
   };
+  if (!urlDatabase[templateVars.id]) {
+    return res.status(404).send("This URL doesn't exist!");
+  }
   res.render("urls_show", templateVars);
 });
 
